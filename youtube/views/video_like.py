@@ -1,6 +1,4 @@
-from .base import (
-    APIView, Response, status, serializers, ValidationError, VideoService
-)
+from .base import APIView, Response, serializers, VideoService
 
 
 class VideoLikeAPI(APIView):

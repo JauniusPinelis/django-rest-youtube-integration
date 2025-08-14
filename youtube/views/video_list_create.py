@@ -1,5 +1,10 @@
 from .base import (
-    APIView, Response, status, serializers, ValidationError, StandardResultsSetPagination, VideoService
+    APIView,
+    Response,
+    status,
+    serializers,
+    StandardResultsSetPagination,
+    VideoService,
 )
 
 
@@ -30,7 +35,7 @@ class VideoListCreateAPI(APIView):
 
     def get(self, request):
         videos = self.video_service.get_all()
-        
+
         paginator = StandardResultsSetPagination()
         paginated_videos = paginator.paginate_queryset(videos, request)
         serializer = self.OutputSerializer(paginated_videos, many=True)

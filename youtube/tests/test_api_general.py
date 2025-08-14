@@ -7,7 +7,6 @@ These tests focus on API error responses and validation.
 from django.urls import reverse
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
-from ..models import Video
 
 
 class APIErrorHandlingTest(APITestCase):

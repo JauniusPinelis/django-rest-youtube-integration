@@ -1,18 +1,38 @@
+import os
 import random
 from django.db import transaction
 from django.core.exceptions import ValidationError
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
+from pydantic import BaseModel, Field
+from openai import OpenAI
 from ..models import Video, Comment
 from .video_service import VideoService
 from .comment_service import CommentService
-from .comment_generation_service import CommentGenerationService
+
+
+class GeneratedComment(BaseModel):
+    content: str = Field(description="The comment text content")
+    tone: str = Field(
+        description="The tone of the comment (friendly, excited, thoughtful, etc.)"
+    )
+    author_style: str = Field(
+        description="The style this author typically uses (casual, technical, enthusiastic, etc.)"
+    )
+
+
+class CommentBatch(BaseModel):
+    comments: List[GeneratedComment] = Field(description="List of generated comments")
 
 
 class ContentPopulationService:
     def __init__(self):
         self.video_service = VideoService()
         self.comment_service = CommentService()
-        self.comment_generator = CommentGenerationService()
+
+        api_key = os.environ.get("OPENAI_API_KEY")
+        if not api_key:
+            raise ValidationError("OPENAI_API_KEY environment variable is required")
+        self.client = OpenAI(api_key=api_key)
 
     VIDEO_TEMPLATES = [
         {
@@ -119,6 +139,42 @@ class ContentPopulationService:
             "like_count": like_count,
         }
 
+    def _generate_comments_with_ai(
+        self, video_title: str, video_description: str, comment_count: int
+    ) -> List[GeneratedComment]:
+        """Generate comments using OpenAI GPT-5 with structured output"""
+        try:
+            system_prompt = (
+                "You are a YouTube comment generator. Create realistic, diverse comments "
+                "that real users would write. Vary the tone and author style for each comment. "
+                "Keep comments authentic and concise (1-3 sentences)."
+            )
+
+            user_prompt = f"""Generate {comment_count} diverse comments for this video:
+Title: {video_title}
+Description: {video_description[:200]}
+
+Create comments with different tones like: {", ".join(self.COMMENT_TONES)}
+Vary the author styles and perspectives."""
+
+            response = self.client.beta.chat.completions.parse(
+                model="gpt-5",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                response_format=CommentBatch,
+                temperature=0.8,
+            )
+
+            if response.choices and response.choices[0].message.parsed:
+                return response.choices[0].message.parsed.comments
+            else:
+                raise ValidationError("OpenAI API returned empty response")
+
+        except Exception as e:
+            raise ValidationError(f"Failed to generate comments: {str(e)}")
+
     def generate_comments_for_video(
         self, video_id: int, comment_count: int = 5
     ) -> Dict[str, Any]:
@@ -129,19 +185,17 @@ class ContentPopulationService:
 
         generated_comments = []
 
-        for i in range(comment_count):
-            try:
-                author = random.choice(self.COMMENT_AUTHORS)
-                tone = random.choice(self.COMMENT_TONES)
+        try:
+            # Generate comments using structured AI output
+            ai_comments = self._generate_comments_with_ai(
+                video.title, video.description, comment_count
+            )
 
-                content = self.comment_generator.generate_comment(
-                    video_title=video.title,
-                    video_description=video.description[:200],
-                    tone=tone,
-                )
+            for ai_comment in ai_comments:
+                author = random.choice(self.COMMENT_AUTHORS)
 
                 comment = self.comment_service.create(
-                    video_id=video_id, author=author, content=content
+                    video_id=video_id, author=author, content=ai_comment.content
                 )
 
                 comment.like_count = random.randint(0, 50)
@@ -151,15 +205,44 @@ class ContentPopulationService:
                     {
                         "comment_id": comment.id,
                         "author": author,
-                        "content": content[:50] + "..."
-                        if len(content) > 50
-                        else content,
-                        "tone": tone,
+                        "content": ai_comment.content[:50] + "..."
+                        if len(ai_comment.content) > 50
+                        else ai_comment.content,
+                        "tone": ai_comment.tone,
+                        "author_style": ai_comment.author_style,
                     }
                 )
 
-            except (ValidationError, Exception):
-                continue
+        except (ValidationError, Exception):
+            # Fallback to simpler method if structured output fails
+            for i in range(comment_count):
+                try:
+                    author = random.choice(self.COMMENT_AUTHORS)
+                    tone = random.choice(self.COMMENT_TONES)
+
+                    # Simple fallback comment generation
+                    content = (
+                        f"Great {tone} video about {video.title}! Thanks for sharing."
+                    )
+
+                    comment = self.comment_service.create(
+                        video_id=video_id, author=author, content=content
+                    )
+                    comment.like_count = random.randint(0, 50)
+                    comment.save()
+
+                    generated_comments.append(
+                        {
+                            "comment_id": comment.id,
+                            "author": author,
+                            "content": content,
+                            "tone": tone,
+                            "author_style": "fallback",
+                        }
+                    )
+
+                except (ValidationError, Exception):
+                    continue
 
         return {
             "video_id": video_id,

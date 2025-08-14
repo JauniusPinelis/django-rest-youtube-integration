@@ -1,6 +1,4 @@
-from .base import (
-    APIView, Response, status, serializers, ValidationError, Http404, VideoService
-)
+from .base import APIView, Response, status, serializers, VideoService
 
 
 class VideoDetailUpdateDeleteAPI(APIView):
@@ -27,7 +25,10 @@ class VideoDetailUpdateDeleteAPI(APIView):
 
         def get_comments(self, obj):
             from .comment_detail_update_delete import CommentDetailUpdateDeleteAPI
-            return CommentDetailUpdateDeleteAPI.OutputSerializer(obj.comments.all(), many=True).data
+
+            return CommentDetailUpdateDeleteAPI.OutputSerializer(
+                obj.comments.all(), many=True
+            ).data
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

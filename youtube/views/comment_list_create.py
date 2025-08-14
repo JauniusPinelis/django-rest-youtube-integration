@@ -1,5 +1,10 @@
 from .base import (
-    APIView, Response, status, serializers, ValidationError, StandardResultsSetPagination, CommentService
+    APIView,
+    Response,
+    status,
+    serializers,
+    StandardResultsSetPagination,
+    CommentService,
 )
 
 
@@ -29,9 +34,9 @@ class CommentListCreateAPI(APIView):
         video_id = request.query_params.get("video", None)
         if video_id is not None:
             video_id = int(video_id)
-        
+
         comments = self.comment_service.get_by_video(video_id=video_id)
-        
+
         paginator = StandardResultsSetPagination()
         paginated_comments = paginator.paginate_queryset(comments, request)
         serializer = self.OutputSerializer(paginated_comments, many=True)
@@ -43,7 +48,7 @@ class CommentListCreateAPI(APIView):
 
         # Convert video to video_id for the service
         validated_data = serializer.validated_data.copy()
-        validated_data['video_id'] = validated_data.pop('video')
+        validated_data["video_id"] = validated_data.pop("video")
         comment = self.comment_service.create(**validated_data)
 
         output_serializer = self.OutputSerializer(comment)

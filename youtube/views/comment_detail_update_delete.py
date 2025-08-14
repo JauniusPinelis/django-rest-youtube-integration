@@ -1,6 +1,4 @@
-from .base import (
-    APIView, Response, status, serializers, ValidationError, Http404, CommentService
-)
+from .base import APIView, Response, status, serializers, CommentService
 
 
 class CommentDetailUpdateDeleteAPI(APIView):
@@ -35,7 +33,9 @@ class CommentDetailUpdateDeleteAPI(APIView):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        comment = self.comment_service.update(comment_id=pk, **serializer.validated_data)
+        comment = self.comment_service.update(
+            comment_id=pk, **serializer.validated_data
+        )
 
         output_serializer = self.OutputSerializer(comment)
         return Response(output_serializer.data)
@@ -46,7 +46,9 @@ class CommentDetailUpdateDeleteAPI(APIView):
         serializer = self.InputSerializer(data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
 
-        comment = self.comment_service.update(comment_id=pk, **serializer.validated_data)
+        comment = self.comment_service.update(
+            comment_id=pk, **serializer.validated_data
+        )
 
         output_serializer = self.OutputSerializer(comment)
         return Response(output_serializer.data)

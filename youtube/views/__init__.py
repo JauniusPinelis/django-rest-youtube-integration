@@ -7,11 +7,11 @@ from .comment_detail_update_delete import CommentDetailUpdateDeleteAPI
 from .comment_like import CommentLikeAPI
 
 __all__ = [
-    'VideoListCreateAPI',
-    'VideoDetailUpdateDeleteAPI', 
-    'VideoIncrementViewsAPI',
-    'VideoLikeAPI',
-    'CommentListCreateAPI',
-    'CommentDetailUpdateDeleteAPI',
-    'CommentLikeAPI'
+    "VideoListCreateAPI",
+    "VideoDetailUpdateDeleteAPI",
+    "VideoIncrementViewsAPI",
+    "VideoLikeAPI",
+    "CommentListCreateAPI",
+    "CommentDetailUpdateDeleteAPI",
+    "CommentLikeAPI",
 ]

@@ -4,8 +4,8 @@ from .comment_generation_service import CommentGenerationService
 from .content_population_service import ContentPopulationService
 
 __all__ = [
-    'VideoService',
-    'CommentService', 
-    'CommentGenerationService',
-    'ContentPopulationService'
+    "VideoService",
+    "CommentService",
+    "CommentGenerationService",
+    "ContentPopulationService",
 ]

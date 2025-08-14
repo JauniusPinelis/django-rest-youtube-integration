@@ -1,4 +1,7 @@
-from django.core.exceptions import ValidationError as DjangoValidationError, PermissionDenied
+from django.core.exceptions import (
+    ValidationError as DjangoValidationError,
+    PermissionDenied,
+)
 from django.http import Http404
 
 from rest_framework.views import exception_handler
@@ -23,8 +26,6 @@ def drf_default_with_modifications_exception_handler(exc, ctx):
         return response
 
     if isinstance(exc.detail, (list, dict)):
-        response.data = {
-            "detail": response.data
-        }
+        response.data = {"detail": response.data}
 
     return response

@@ -1,6 +1,4 @@
-from .base import (
-    APIView, Response, status, serializers, ValidationError, CommentService
-)
+from .base import APIView, Response, serializers, CommentService
 
 
 class CommentLikeAPI(APIView):

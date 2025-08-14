@@ -33,7 +33,7 @@ class CommentService:
 
         for field, value in kwargs.items():
             setattr(comment, field, value)
-        
+
         comment.full_clean()
         comment.save()
         return comment
@@ -44,7 +44,7 @@ class CommentService:
             comment = Comment.objects.get(pk=comment_id)
         except Comment.DoesNotExist:
             raise ValidationError("Comment not found.")
-        
+
         comment.delete()
 
     @transaction.atomic
