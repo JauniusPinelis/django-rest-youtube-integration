@@ -1,0 +1,49 @@
+[project]
+name = "django-youtube-2"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "django>=5.2.5",
+    "django-environ>=0.12.0",
+    "djangorestframework>=3.16.1",
+    "openai>=1.99.6",
+    "requests>=2.32.4",
+    "psycopg2-binary>=2.9.0",
+    "celery>=5.4.0",
+    "django-celery-beat>=2.7.0",
+    "redis>=5.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "django-stubs>=5.2.2",
+    "mypy>=1.17.1",
+    "pre-commit>=4.3.0",
+    "ruff>=0.12.8",
+]
+
+[tool.mypy]
+python_version = "3.12"
+check_untyped_defs = true
+ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+plugins = ["mypy_django_plugin.main"]
+
+[tool.django-stubs]
+django_settings_module = "youtube_api.settings"
+
+[[tool.mypy.overrides]]
+module = [
+    "*.migrations.*",
+    "manage",
+    "*.settings",
+    "*.wsgi",
+    "*.asgi",
+    "*.tests.*",
+    "*.models",
+]
+ignore_errors = true

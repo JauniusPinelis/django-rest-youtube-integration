@@ -1,0 +1,39 @@
+# Pre-commit configuration for Django YouTube API project
+repos:
+  # Ruff - Python linter and formatter
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.8
+    hooks:
+      # Run the linter
+      - id: ruff
+        types: [python]
+        args: ["--fix"]
+      # Run the formatter
+      - id: ruff-format
+        types: [python]
+
+  # MyPy - Static type checker
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.17.1
+    hooks:
+      - id: mypy
+        additional_dependencies: [
+          "django-stubs[compatible-mypy]",
+          "django>=5.2.5",
+          "django-environ>=0.12.0",
+          "djangorestframework>=3.16.1",
+          "openai>=1.99.6",
+          "types-requests"
+        ]
+        args: ["--install-types", "--non-interactive"]
+        exclude: ^(migrations/|manage\.py|.*_api/settings\.py|.*_api/wsgi\.py|.*_api/asgi\.py)
+
+  # Django Tests
+  - repo: local
+    hooks:
+      - id: django-tests
+        name: Run Django Tests
+        entry: uv run python manage.py test
+        language: system
+        types: [python]
+        pass_filenames: false
