@@ -2,6 +2,34 @@ from django.db import models
 from django.utils import timezone
 
 
+class TaskLog(models.Model):
+    TASK_STATUS_CHOICES = [
+        ("PENDING", "Pending"),
+        ("SUCCESS", "Success"),
+        ("FAILURE", "Failure"),
+        ("RETRY", "Retry"),
+    ]
+
+    task_name = models.CharField(max_length=200)
+    task_id = models.CharField(max_length=255, unique=True)
+    status = models.CharField(
+        max_length=20, choices=TASK_STATUS_CHOICES, default="PENDING"
+    )
+    result = models.JSONField(null=True, blank=True)
+    error_message = models.TextField(blank=True)
+    args = models.JSONField(null=True, blank=True)
+    kwargs = models.JSONField(null=True, blank=True)
+    started_at = models.DateTimeField(default=timezone.now)
+    completed_at = models.DateTimeField(null=True, blank=True)
+    duration_seconds = models.FloatField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-started_at"]
+
+    def __str__(self):
+        return f"{self.task_name} - {self.status} ({self.started_at})"
+
+
 class Video(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
