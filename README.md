@@ -4,14 +4,32 @@ A Django REST API simulating YouTube video and comment management with AI-genera
 
 ## Setup & Run
 
-### Prerequisites
+### Using Docker (Recommended)
+
+1. **Start all services** (includes migrations)
+   ```bash
+   docker-compose up -d
+   ```
+
+2. **Create admin user (optional)**
+   ```bash
+   docker-compose exec web uv run python manage.py createsuperuser
+   ```
+
+3. **Access the application**
+   - API: http://127.0.0.1:8000/api/videos/
+   - Admin: http://127.0.0.1:8000/admin/ (admin / admin)
+   - PgAdmin: http://127.0.0.1:8080/ (admin@example.com / admin)
+
+### Manual Setup
+
+**Prerequisites:**
 - Python 3.8+
 - uv package manager
 - Redis (for Celery)
 - OpenAI API key (optional, for comment generation)
 
-### Quick Start
-
+**Steps:**
 1. **Install dependencies**
    ```bash
    uv sync
@@ -36,13 +54,6 @@ A Django REST API simulating YouTube video and comment management with AI-genera
    ```bash
    uv run python manage.py createsuperuser
    ```
-
-### Using Docker (Preferred)
-```bash
-docker-compose up -d
-docker-compose exec web uv run python manage.py migrate
-docker-compose exec web uv run python manage.py createsuperuser
-```
 
 ## Features
 
