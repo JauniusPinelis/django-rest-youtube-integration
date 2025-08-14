@@ -1,4 +1,7 @@
-from .base import APIView, Response, status, serializers, VideoService
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import serializers, status
+from youtube.services.video_service import VideoService
 
 
 class VideoDetailUpdateDeleteAPI(APIView):

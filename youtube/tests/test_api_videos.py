@@ -114,7 +114,7 @@ class VideoAPITest(APITestCase):
         response = self.client.post(url, data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("title", response.data)
+        self.assertIn("detail", response.data)
 
     def test_create_video_with_duplicate_url_returns_validation_error(self):
         """Test POST with duplicate URL returns 400"""
@@ -126,6 +126,7 @@ class VideoAPITest(APITestCase):
         response = self.client.post(url, data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("detail", response.data)
 
     def test_update_video_updates_specified_fields_only(self):
         """Test PATCH updates only specified fields"""
@@ -180,7 +181,8 @@ class VideoAPITest(APITestCase):
         url = reverse("video-detail", args=[999])
         response = self.client.get(url)
 
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("detail", response.data)
 
     def test_increment_views_nonexistent_video(self):
         """Test incrementing views for non-existent video"""

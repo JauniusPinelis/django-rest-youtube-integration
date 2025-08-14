@@ -2,7 +2,7 @@ import os
 import random
 from django.db import transaction
 from django.core.exceptions import ValidationError
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any, List, TypedDict
 from pydantic import BaseModel, Field
 from openai import OpenAI
 from ..models import Video, Comment
@@ -24,6 +24,12 @@ class CommentBatch(BaseModel):
     comments: List[GeneratedComment] = Field(description="List of generated comments")
 
 
+class VideoTemplate(TypedDict):
+    title: str
+    description: str
+    topics: List[str]
+
+
 class ContentPopulationService:
     def __init__(self):
         self.video_service = VideoService()
@@ -34,7 +40,7 @@ class ContentPopulationService:
             raise ValidationError("OPENAI_API_KEY environment variable is required")
         self.client = OpenAI(api_key=api_key)
 
-    VIDEO_TEMPLATES = [
+    VIDEO_TEMPLATES: List[VideoTemplate] = [
         {
             "title": "Amazing Python Tutorial: {topic}",
             "description": "Learn {topic} in this comprehensive tutorial. Perfect for beginners and advanced developers alike!",

@@ -1,4 +1,7 @@
-from .base import APIView, Response, status, serializers, CommentService
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import serializers, status
+from youtube.services.comment_service import CommentService
 
 
 class CommentDetailUpdateDeleteAPI(APIView):

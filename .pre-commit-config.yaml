@@ -17,15 +17,6 @@ repos:
     rev: v1.17.1
     hooks:
       - id: mypy
-        additional_dependencies: [
-          "django-stubs[compatible-mypy]",
-          "django>=5.2.5",
-          "django-environ>=0.12.0",
-          "djangorestframework>=3.16.1",
-          "openai>=1.99.6",
-          "types-requests"
-        ]
-        args: ["--install-types", "--non-interactive"]
         exclude: ^(migrations/|manage\.py|.*_api/settings\.py|.*_api/wsgi\.py|.*_api/asgi\.py)
 
   # Django Tests

@@ -34,8 +34,8 @@ class VideoService:
             title=title,
             description=description,
             url=url,
-            thumbnail_url=thumbnail_url,
-            duration=duration,
+            thumbnail_url=thumbnail_url or "",
+            duration=duration or 0,
         )
         video.full_clean()
         video.save()

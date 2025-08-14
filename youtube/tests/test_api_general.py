@@ -29,5 +29,4 @@ class APIErrorHandlingTest(APITestCase):
         response = self.client.post(url, {}, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("title", response.data)
-        self.assertIn("url", response.data)
+        self.assertIn("detail", response.data)

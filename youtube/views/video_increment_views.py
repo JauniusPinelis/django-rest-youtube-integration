@@ -1,4 +1,7 @@
-from .base import APIView, Response, serializers, VideoService
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import serializers
+from youtube.services.video_service import VideoService
 
 
 class VideoIncrementViewsAPI(APIView):

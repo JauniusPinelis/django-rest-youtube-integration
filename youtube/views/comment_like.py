@@ -1,4 +1,7 @@
-from .base import APIView, Response, serializers, CommentService
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import serializers
+from youtube.services.comment_service import CommentService
 
 
 class CommentLikeAPI(APIView):
