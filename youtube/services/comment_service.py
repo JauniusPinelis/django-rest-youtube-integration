@@ -5,6 +5,12 @@ from ..models import Video, Comment
 
 
 class CommentService:
+    def get_by_id(self, *, comment_id: int) -> Comment:
+        try:
+            return Comment.objects.get(pk=comment_id)
+        except Comment.DoesNotExist:
+            raise ValidationError("Comment not found.")
+
     @transaction.atomic
     def create(self, *, video_id: int, author: str, content: str) -> Comment:
         try:
@@ -17,6 +23,29 @@ class CommentService:
         comment.save()
 
         return comment
+
+    @transaction.atomic
+    def update(self, *, comment_id: int, **kwargs) -> Comment:
+        try:
+            comment = Comment.objects.get(pk=comment_id)
+        except Comment.DoesNotExist:
+            raise ValidationError("Comment not found.")
+
+        for field, value in kwargs.items():
+            setattr(comment, field, value)
+        
+        comment.full_clean()
+        comment.save()
+        return comment
+
+    @transaction.atomic
+    def delete(self, *, comment_id: int) -> None:
+        try:
+            comment = Comment.objects.get(pk=comment_id)
+        except Comment.DoesNotExist:
+            raise ValidationError("Comment not found.")
+        
+        comment.delete()
 
     @transaction.atomic
     def increment_likes(self, *, comment_id: int) -> Comment:
