@@ -25,52 +25,32 @@ class CommentDetailUpdateDeleteAPI(APIView):
         self.comment_service = CommentService()
 
     def get(self, request, pk):
-        try:
-            comment = self.comment_service.get_by_id(comment_id=pk)
-        except ValidationError:
-            raise Http404
-
+        comment = self.comment_service.get_by_id(comment_id=pk)
         serializer = self.OutputSerializer(comment)
         return Response(serializer.data)
 
     def put(self, request, pk):
-        try:
-            comment = self.comment_service.get_by_id(comment_id=pk)
-        except ValidationError:
-            raise Http404
+        self.comment_service.get_by_id(comment_id=pk)
 
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        try:
-            comment = self.comment_service.update(comment_id=pk, **serializer.validated_data)
-        except ValidationError as e:
-            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        comment = self.comment_service.update(comment_id=pk, **serializer.validated_data)
 
         output_serializer = self.OutputSerializer(comment)
         return Response(output_serializer.data)
 
     def patch(self, request, pk):
-        try:
-            comment = self.comment_service.get_by_id(comment_id=pk)
-        except ValidationError:
-            raise Http404
+        self.comment_service.get_by_id(comment_id=pk)
 
         serializer = self.InputSerializer(data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
 
-        try:
-            comment = self.comment_service.update(comment_id=pk, **serializer.validated_data)
-        except ValidationError as e:
-            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        comment = self.comment_service.update(comment_id=pk, **serializer.validated_data)
 
         output_serializer = self.OutputSerializer(comment)
         return Response(output_serializer.data)
 
     def delete(self, request, pk):
-        try:
-            self.comment_service.delete(comment_id=pk)
-        except ValidationError:
-            raise Http404
-
+        self.comment_service.delete(comment_id=pk)
         return Response(status=status.HTTP_204_NO_CONTENT)

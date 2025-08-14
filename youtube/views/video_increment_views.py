@@ -12,10 +12,6 @@ class VideoIncrementViewsAPI(APIView):
         self.video_service = VideoService()
 
     def post(self, request, pk):
-        try:
-            video = self.video_service.increment_views(video_id=pk)
-        except ValidationError as e:
-            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
+        video = self.video_service.increment_views(video_id=pk)
         serializer = self.OutputSerializer({"view_count": video.view_count})
         return Response(serializer.data)

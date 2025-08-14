@@ -40,10 +40,7 @@ class VideoListCreateAPI(APIView):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        try:
-            video = self.video_service.create(**serializer.validated_data)
-        except ValidationError as e:
-            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        video = self.video_service.create(**serializer.validated_data)
 
         output_serializer = self.OutputSerializer(video)
         return Response(output_serializer.data, status=status.HTTP_201_CREATED)

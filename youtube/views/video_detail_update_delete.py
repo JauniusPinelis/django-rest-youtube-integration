@@ -34,52 +34,32 @@ class VideoDetailUpdateDeleteAPI(APIView):
         self.video_service = VideoService()
 
     def get(self, request, pk):
-        try:
-            video = self.video_service.get_by_id(video_id=pk)
-        except ValidationError:
-            raise Http404
-
+        video = self.video_service.get_by_id(video_id=pk)
         serializer = self.OutputSerializer(video)
         return Response(serializer.data)
 
     def put(self, request, pk):
-        try:
-            video = self.video_service.get_by_id(video_id=pk)
-        except ValidationError:
-            raise Http404
+        self.video_service.get_by_id(video_id=pk)
 
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        try:
-            video = self.video_service.update(video_id=pk, **serializer.validated_data)
-        except ValidationError as e:
-            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        video = self.video_service.update(video_id=pk, **serializer.validated_data)
 
         output_serializer = self.OutputSerializer(video)
         return Response(output_serializer.data)
 
     def patch(self, request, pk):
-        try:
-            video = self.video_service.get_by_id(video_id=pk)
-        except ValidationError:
-            raise Http404
+        self.video_service.get_by_id(video_id=pk)
 
         serializer = self.InputSerializer(data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
 
-        try:
-            video = self.video_service.update(video_id=pk, **serializer.validated_data)
-        except ValidationError as e:
-            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        video = self.video_service.update(video_id=pk, **serializer.validated_data)
 
         output_serializer = self.OutputSerializer(video)
         return Response(output_serializer.data)
 
     def delete(self, request, pk):
-        try:
-            self.video_service.delete(video_id=pk)
-        except ValidationError:
-            raise Http404
-
+        self.video_service.delete(video_id=pk)
         return Response(status=status.HTTP_204_NO_CONTENT)

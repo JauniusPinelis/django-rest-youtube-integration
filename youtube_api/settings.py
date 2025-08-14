@@ -155,6 +155,7 @@ REST_FRAMEWORK = {
         "rest_framework.renderers.JSONRenderer",
         "rest_framework.renderers.BrowsableAPIRenderer",
     ],
+    "EXCEPTION_HANDLER": "youtube.exceptions.drf_default_with_modifications_exception_handler",
 }
 
 # Celery Configuration

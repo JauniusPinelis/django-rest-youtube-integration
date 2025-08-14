@@ -41,13 +41,10 @@ class CommentListCreateAPI(APIView):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        try:
-            # Convert video to video_id for the service
-            validated_data = serializer.validated_data.copy()
-            validated_data['video_id'] = validated_data.pop('video')
-            comment = self.comment_service.create(**validated_data)
-        except ValidationError as e:
-            return Response({"video": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        # Convert video to video_id for the service
+        validated_data = serializer.validated_data.copy()
+        validated_data['video_id'] = validated_data.pop('video')
+        comment = self.comment_service.create(**validated_data)
 
         output_serializer = self.OutputSerializer(comment)
         return Response(output_serializer.data, status=status.HTTP_201_CREATED)
