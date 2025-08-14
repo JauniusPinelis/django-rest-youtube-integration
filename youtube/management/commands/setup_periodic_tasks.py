@@ -31,11 +31,6 @@ class Command(BaseCommand):
             action="store_true",
             help="Clear existing periodic tasks before creating new ones",
         )
-        parser.add_argument(
-            "--no-cleanup",
-            action="store_true",
-            help="Skip creating the cleanup task (useful for production)",
-        )
 
     @transaction.atomic
     def handle(self, *args, **options):
@@ -191,24 +186,6 @@ class Command(BaseCommand):
         if created:
             self.stdout.write("  ✓ Created engagement statistics task (every hour)")
             tasks_created += 1
-
-        # Task 4: Clean up old data daily (optional)
-        if not options["no_cleanup"]:
-            task, created = PeriodicTask.objects.get_or_create(
-                name="YouTube: Cleanup Old Data",
-                defaults={
-                    "task": "youtube.tasks.cleanup_old_data",
-                    "crontab": schedules["daily_2am"],
-                    "enabled": True,
-                    "description": "Clean up old test data daily at 2 AM",
-                    "kwargs": '{"days_old": 30}',
-                },
-            )
-            if created:
-                self.stdout.write("  ✓ Created data cleanup task (daily at 2 AM)")
-                tasks_created += 1
-        else:
-            self.stdout.write("  ⚠ Skipped data cleanup task (--no-cleanup flag used)")
 
         return tasks_created
 

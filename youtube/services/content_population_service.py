@@ -334,18 +334,3 @@ Vary the author styles and perspectives."""
             "comment_stats": comment_stats,
             "most_commented_videos": most_commented,
         }
-
-    def cleanup_old_content(self, days_old: int = 30) -> Dict[str, Any]:
-        from datetime import timedelta
-        from django.utils import timezone
-
-        cutoff_date = timezone.now() - timedelta(days=days_old)
-
-        deleted_comments = Comment.objects.filter(created_at__lt=cutoff_date).delete()
-        deleted_videos = Video.objects.filter(created_at__lt=cutoff_date).delete()
-
-        return {
-            "videos_deleted": deleted_videos[0] if deleted_videos[0] else 0,
-            "comments_deleted": deleted_comments[0] if deleted_comments[0] else 0,
-            "cutoff_date": cutoff_date.isoformat(),
-        }

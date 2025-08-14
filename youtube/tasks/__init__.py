@@ -4,7 +4,6 @@ Celery tasks for YouTube integration.
 
 from .content_generation_tasks import ContentGenerationTasks
 from .engagement_tasks import EngagementTasks
-from .maintenance_tasks import MaintenanceTasks
 
 # Export the task functions for backward compatibility
 generate_video_content = ContentGenerationTasks.generate_video_content
@@ -13,5 +12,3 @@ populate_initial_content = ContentGenerationTasks.populate_initial_content
 
 simulate_user_engagement = EngagementTasks.simulate_user_engagement
 generate_engagement_stats = EngagementTasks.generate_engagement_stats
-
-cleanup_old_data = MaintenanceTasks.cleanup_old_data

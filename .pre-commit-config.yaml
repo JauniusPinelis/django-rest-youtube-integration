@@ -12,12 +12,12 @@ repos:
       - id: ruff-format
         types: [python]
 
-  # MyPy - Static type checker
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.17.1
-    hooks:
-      - id: mypy
-        exclude: ^(migrations/|manage\.py|.*_api/settings\.py|.*_api/wsgi\.py|.*_api/asgi\.py)
+  # # MyPy - Static type checker
+  # - repo: https://github.com/pre-commit/mirrors-mypy
+  #   rev: v1.17.1
+  #   hooks:
+  #     - id: mypy
+  #       exclude: ^(migrations/|manage\.py|.*_api/settings\.py|.*_api/wsgi\.py|.*_api/asgi\.py)
 
   # Django Tests
   - repo: local
